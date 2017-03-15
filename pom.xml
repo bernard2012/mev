@@ -46,6 +46,7 @@
     <module>normalization</module>
     <module>edger</module>
     <module>wgcna</module>
+    <module>tsne</module>
     <module>web</module>
 
   </modules>
@@ -306,6 +307,7 @@
           </dependency>
         </dependencies>
         <configuration>
+          <argLine>-Xms8000m -Xmx8000m</argLine>
           <systemPropertyVariables>
             <edu.dfci.cccb.mev.r.mock.cli.CliRScriptEngine.rScriptExecutable>${mev.Rscript}</edu.dfci.cccb.mev.r.mock.cli.CliRScriptEngine.rScriptExecutable>
             <spring_profiles_active>test</spring_profiles_active>

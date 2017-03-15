@@ -46,6 +46,7 @@
     "mev-limma": "file:../libs/analyses/limma",
     "mev-normalization": "file:../libs/analyses/normalization",
     "mev-pca": "file:../libs/analyses/pca",
+    "mev-tsne": "file:../libs/analyses/tsne",
     "mev-project": "file:../libs/domain/project",
     "mev-results-table": "file:../libs/widgets/mevResultsTable",
     "mev-alert": "file:../libs/widgets/mevAlert",
@@ -68,6 +69,9 @@
     "q": "^1.4.1",
     "steal": "^0.13.2",
     "ui-router-extras": "^0.1.2"
+  },
+  "steal":{
+    "npmAlgorithm": "flat"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

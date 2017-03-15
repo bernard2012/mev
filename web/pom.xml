@@ -306,6 +306,14 @@
       <version>BAYLIE-SNAPSHOT</version>
     </dependency>
 
+    <!-- TSNE -->
+
+    <dependency>
+      <groupId>edu.dfci.cccb</groupId>
+      <artifactId>mev-tsne-rest</artifactId>
+      <version>BAYLIE-SNAPSHOT</version>
+    </dependency>
+
     <!-- Servlet -->
 
     <dependency>

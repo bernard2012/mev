@@ -1,4 +1,4 @@
-package edu.dfci.cccb.mev.web.test.edger.controller;
+package edu.dfci.cccb.mev.web.test.tsne.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,8 +10,8 @@ import edu.dfci.cccb.mev.dataset.domain.supercsv.SuperCsvParserFactory;
 import edu.dfci.cccb.mev.dataset.domain.tsv.UrlTsvInput;
 import edu.dfci.cccb.mev.dataset.rest.configuration.DatasetRestConfiguration;
 import edu.dfci.cccb.mev.dataset.rest.configuration.RDispatcherConfiguration;
-import edu.dfci.cccb.mev.edger.domain.Edge;
-import edu.dfci.cccb.mev.edger.rest.EdgeConfiguration;
+import edu.dfci.singlecell.tsne.domain.Tsne;
+import edu.dfci.singlecell.tsne.rest.TsneConfiguration;
 import edu.dfci.cccb.mev.web.configuration.DispatcherConfiguration;
 import edu.dfci.cccb.mev.web.configuration.PersistenceConfiguration;
 import edu.dfci.cccb.mev.web.configuration.container.ContainerConfigurations;
@@ -50,20 +50,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import edu.dfci.cccb.mev.annotation.server.configuration.AnnotationProjectManagerConfiguration;
+import edu.dfci.cccb.mev.annotation.server.configuration.ProbeAnnotationsConfigurationMain;
+import edu.dfci.cccb.mev.presets.rest.configuration.PresetsRestConfiguration;
+import edu.dfci.cccb.mev.test.annotation.server.configuration.ProbeAnnotationsPersistanceConfigTest;
 /**
  * Created by antony on 4/19/16.
  */
 @Log4j
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={DispatcherConfiguration.class,
+@ContextConfiguration(classes={
+        DispatcherConfiguration.class,
         PersistenceConfiguration.class,
         ContainerConfigurations.class,
         DatasetRestConfiguration.class,
+        AnnotationProjectManagerConfiguration.class,
+    	PresetsRestConfiguration.class,
+    	ProbeAnnotationsPersistanceConfigTest.class,
         RDispatcherConfiguration.class,
-        EdgeConfiguration.class
+        TsneConfiguration.class
 })
-public class TestEdgerController {
+public class TestTsneController {
 
     @Autowired private WebApplicationContext applicationContext;
     private MockMvc mockMvc;
@@ -83,7 +91,7 @@ public class TestEdgerController {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         applicationContext.getBean(Workspace.class);
 
-        URL urlData = this.getClass ().getResource ("/mouse_test_data.tsv");
+        URL urlData = this.getClass ().getResource ("/new.table.125.500.logged.txt");
         RawInput input = new UrlTsvInput(urlData);
         dataset = new SimpleDatasetBuilder().setParserFactories (asList (new SuperCsvParserFactory()))
                 .setValueStoreBuilder (new FlatFileValueStoreBuilder())
@@ -94,11 +102,10 @@ public class TestEdgerController {
     @Test 
     //@Ignore
     public void testAsync() throws Exception {
-        Selection control = jsonObjectMapper.readValue("{\"name\":\"s1\",\"properties\":{\"selectionColor\":\"#5fd97b\",\"selectionDescription\":\"\"},\"keys\":[\"A\",\"B\",\"C\"]}", SimpleSelection.class);
-        Selection experiment = jsonObjectMapper.readValue("{\"name\":\"s2\",\"properties\":{\"selectionColor\":\"#b0220e\",\"selectionDescription\":\"\"},\"keys\":[\"D\",\"E\",\"F\"]}", SimpleSelection.class);
-        Edge.EdgeParams dto = new Edge.EdgeParams("edger-test", experiment, control, "fdr");
+        Tsne.TsneParams dto = new Tsne.TsneParams("tsne-test", 15, 2);
+		log.debug("***** DATASET addeding");
         MvcResult mvcResult = this.mockMvc.perform(
-                put(String.format("/dataset/%s/analyze/edger/%s", dataset.name(), dto.name()))
+                put(String.format("/dataset/%s/analyze/tsne/%s", dataset.name(), dto.name()))
                         .param ("format", "json")
                         .contentType (MediaType.APPLICATION_JSON)
                         .accept("application/json")
@@ -108,24 +115,27 @@ public class TestEdgerController {
         .andExpect (status ().isOk ())
         .andDo(print())
         .andReturn ();
-
+		
+		log.debug("***** DATASET added");
         //The first put will generate an AnalysisStatus object with "IN_PROGRESS" status
         Analysis analysisStatus = dataset.analyses ().get (dto.name());
         log.debug("******* AnalysisStatus:\n"+ jsonObjectMapper.writeValueAsString (analysisStatus));
         assertThat(analysisStatus.name (), is(dto.name()));
-        assertThat(analysisStatus.type (), is("edger"));
+        assertThat(analysisStatus.type (), is("tsne"));
         assertThat(analysisStatus.status (), is(Analysis.MEV_ANALYSIS_STATUS_IN_PROGRESS));
+
 
         //Wait for analysis to complete
         Thread.sleep (10000L);
 
         //get the analysis directly from workspace
         log.debug("**************************");
-        Edge analysis =  (Edge)dataset.analyses ().get (dto.name());
-        log.debug("******* EdgerAnalysis:\n"+ jsonObjectMapper.writeValueAsString (analysis));
+        Tsne analysis =  (Tsne)dataset.analyses ().get (dto.name());
+        log.debug("******* TsneAnalysis:\n"+ jsonObjectMapper.writeValueAsString (analysis));
         assertThat(analysis.name (), is(dto.name()));
         assertThat(analysis.status (), is(Analysis.MEV_ANALYSIS_STATUS_SUCCESS));
 
+        /*
         //get the analysis via rest
         MvcResult mvcResultGET = this.mockMvc.perform (get(String.format("/dataset/%s/analysis/%s", dataset.name(), dto.name()))
                 .contentType (MediaType.APPLICATION_JSON)
@@ -142,6 +152,7 @@ public class TestEdgerController {
         assertNotNull (analysisFromGET.results ());
         assertThat(analysisFromGET.results ().size(), greaterThan(0));
         assertThat(analysisFromGET.status (), is(Analysis.MEV_ANALYSIS_STATUS_SUCCESS));
+		*/
     }
 
 }

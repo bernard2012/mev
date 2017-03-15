@@ -63,7 +63,7 @@ define(function(require){
 			scope: {
 				pcaAnalysis: "=mevPcaAnalysis",
 				selections: "=mevSelections",
-				curSelection: "=",
+				curSelection: "=curSelection",
 				curGroups: "=mevCurGroups",
 				curSelections: "=mevCurSelections"
 			},

@@ -51,6 +51,7 @@ import edu.dfci.cccb.mev.t_test.rest.configuration.TTestRestConfiguration;
 import edu.dfci.cccb.mev.topgo.rest.configuration.TopGoConfiguration;
 import edu.dfci.cccb.mev.voom.rest.configuration.VoomConfiguration;
 import edu.dfci.cccb.mev.web.configuration.container.ContainerConfigurations;
+import edu.dfci.singlecell.tsne.rest.TsneConfiguration;
 
 /**
  * @author levk
@@ -94,6 +95,7 @@ public class ApplicationInitializer implements WebApplicationInitializer {
     mvcContext.register (NormalizationConfiguration.class);
     mvcContext.register (EdgeConfiguration.class);
     mvcContext.register (WgcnaConfiguration.class);
+    mvcContext.register (TsneConfiguration.class);
 
     DispatcherServlet dispatcher = new DispatcherServlet (mvcContext);
 

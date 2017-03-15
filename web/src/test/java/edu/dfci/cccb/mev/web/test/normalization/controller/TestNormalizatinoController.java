@@ -115,7 +115,8 @@ public class TestNormalizatinoController {
 
 		workspace.put (dataset);
 	}
-	@Test @Ignore
+	@Test 
+    //@Ignore
 	public void testAsync() throws Exception {
 		Normalization.NormalizationParameters dto = new Normalization.NormalizationParameters("css", "normcss", dataset.name()+"--normcss");
 		MvcResult mvcResult = this.mockMvc.perform(
